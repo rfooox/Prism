@@ -6,6 +6,15 @@
 
 ## 📅 2026-09-13
 
+### 🏆 里程碑完成：M1 核心底座与全景外壳测试通过
+- **验收状态**：用户实测通过，窗口展示、多容器物理隔离、左侧树状管理栏、顶部导航与收藏栏、视窗边界同步协议均达到交付标准。
+- **阶段沉淀成果**：
+  - `ContainerManager` 实现 `session.fromPartition` 物理级会话隔离，预置 4 组场景容器；
+  - `TabManager` + `LayoutManager` 打通现代 `BaseWindow + WebContentsView` 视窗调度；
+  - 全景四方环绕式 UI 外壳（React 18 + Tailwind CSS v4）与 `Ctrl+\` 迷你坞折叠交互。
+
+---
+
 ### 记录 1：解决 pnpm 10 下 Electron 二进制缺失与启动卡死问题
 - **现象**：
   在控制台运行 `pnpm dev` 时报错：`Error: Electron uninstall at getElectronPath`。
