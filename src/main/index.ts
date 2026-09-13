@@ -6,6 +6,14 @@ import { LayoutManager } from './layout/LayoutManager'
 import { TabManager } from './tab/TabManager'
 import { registerIpcHandlers } from './ipc/handlers'
 
+// 全局异常安全保护，防止静默崩溃退出
+process.on('uncaughtException', (err) => {
+  console.error('[主进程异常]', err)
+})
+process.on('unhandledRejection', (reason) => {
+  console.error('[主进程 Promise 拒绝]', reason)
+})
+
 let mainWindow: BrowserWindow | null = null
 let containerManager: ContainerManager | null = null
 let tabManager: TabManager | null = null
@@ -18,7 +26,8 @@ function createWindow(): void {
     height: 900,
     minWidth: 1000,
     minHeight: 650,
-    show: false,
+    show: true, // 立即展示窗口，避免因 ready-to-show 延迟或未触发导致看似打不开
+    backgroundColor: '#020617', // Slate 950 深色背景，防止白色闪烁
     autoHideMenuBar: true,
     titleBarStyle: 'hidden', // 沉浸式标题栏
     titleBarOverlay: {
@@ -46,12 +55,17 @@ function createWindow(): void {
     layoutManager
   )
 
-  mainWindow.on('ready-to-show', () => {
+  // 监听渲染进程加载失败
+  mainWindow.webContents.on('did-fail-load', (_, errorCode, errorDescription, validatedURL) => {
+    console.error(`[渲染层加载失败] Code: ${errorCode}, Desc: ${errorDescription}, URL: ${validatedURL}`)
+  })
+
+  mainWindow.once('ready-to-show', () => {
     mainWindow?.show()
-    // 首次启动时，默认在第一个容器 (工作主舱) 下打开初始标签
+    // 首次启动时，默认在第一个容器 (工作主舱) 下打开初始标签页
     const containers = containerManager?.getAllContainers() || []
     if (containers.length > 0 && tabManager) {
-      tabManager.createTab(containers[0].id, 'https://www.google.com')
+      tabManager.createTab(containers[0].id, 'about:blank')
     }
   })
 

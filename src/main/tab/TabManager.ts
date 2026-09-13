@@ -194,15 +194,19 @@ export class TabManager {
 
   public goBackTab(tabId: string): boolean {
     const view = this.views.get(tabId)
-    if (!view || !view.webContents.canGoBack()) return false
-    view.webContents.goBack()
+    if (!view) return false
+    const canGoBack = view.webContents.navigationHistory?.canGoBack() ?? view.webContents.canGoBack()
+    if (!canGoBack) return false
+    view.webContents.navigationHistory?.goBack() ?? view.webContents.goBack()
     return true
   }
 
   public goForwardTab(tabId: string): boolean {
     const view = this.views.get(tabId)
-    if (!view || !view.webContents.canGoForward()) return false
-    view.webContents.goForward()
+    if (!view) return false
+    const canGoForward = view.webContents.navigationHistory?.canGoForward() ?? view.webContents.canGoForward()
+    if (!canGoForward) return false
+    view.webContents.navigationHistory?.goForward() ?? view.webContents.goForward()
     return true
   }
 
@@ -225,8 +229,8 @@ export class TabManager {
       if (tab) {
         tab.isLoading = false
         tab.url = wc.getURL()
-        tab.canGoBack = wc.canGoBack()
-        tab.canGoForward = wc.canGoForward()
+        tab.canGoBack = wc.navigationHistory?.canGoBack() ?? wc.canGoBack()
+        tab.canGoForward = wc.navigationHistory?.canGoForward() ?? wc.canGoForward()
         this.notifyTabsChange()
       }
     })
