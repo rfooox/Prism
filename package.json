@@ -1,0 +1,40 @@
+{
+  "name": "prism-browser",
+  "version": "0.1.0",
+  "description": "棱界 (Prism) — 一束光，多重身份。全景环绕式多容器物理隔离浏览器。",
+  "main": "./out/main/index.js",
+  "author": "Prism Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
+    "tailwind-merge": "^3.0.1",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@electron-toolkit/preload": "^3.0.0",
+    "@electron-toolkit/utils": "^3.0.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/adm-zip": "^0.5.8",
+    "@types/node": "^20.17.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "electron": "^33.2.1",
+    "electron-vite": "^2.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.9"
+  }
+}
