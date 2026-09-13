@@ -165,16 +165,22 @@ export class TabManager {
    */
   public async navigateTab(tabId: string, url: string): Promise<boolean> {
     const view = this.views.get(tabId)
-    if (!view) return false
+    const tab = this.tabs.get(tabId)
+    if (!view || !tab) return false
 
     let formattedUrl = url.trim()
-    if (!/^https?:\/\//i.test(formattedUrl)) {
+    if (!/^https?:\/\//i.test(formattedUrl) && !/^about:/i.test(formattedUrl)) {
       if (formattedUrl.includes('.') && !formattedUrl.includes(' ')) {
         formattedUrl = 'https://' + formattedUrl
       } else {
         formattedUrl = `https://www.google.com/search?q=${encodeURIComponent(formattedUrl)}`
       }
     }
+
+    // 关键优化：立即乐观更新 URL 并通知前端，杜绝输入回车后 URL 栏闪烁跳回旧网址
+    tab.url = formattedUrl
+    tab.isLoading = true
+    this.notifyTabsChange()
 
     try {
       await view.webContents.loadURL(formattedUrl)
@@ -215,6 +221,17 @@ export class TabManager {
    */
   private setupViewListeners(tabId: string, view: WebContentsView): void {
     const wc = view.webContents
+
+    // 网页开始发起导航，立即更新 URL
+    wc.on('did-start-navigation', (_, url, __, isMainFrame) => {
+      if (isMainFrame && url) {
+        const tab = this.tabs.get(tabId)
+        if (tab) {
+          tab.url = url
+          this.notifyTabsChange()
+        }
+      }
+    })
 
     wc.on('did-start-loading', () => {
       const tab = this.tabs.get(tabId)

@@ -9,7 +9,7 @@ import { useContainerStore } from './store/useContainerStore'
 import { useTabStore } from './store/useTabStore'
 
 export const App: React.FC = () => {
-  const { isSidebarCollapsed, toggleSidebar, fetchContainers, setContainers } = useContainerStore()
+  const { isSidebarCollapsed, toggleSidebar, fetchContainers, setContainers, inspectingContainerId } = useContainerStore()
   const { fetchTabs, setTabs, setActiveTabId } = useTabStore()
 
   const [isBookmarksVisible, setIsBookmarksVisible] = useState(true)
@@ -74,7 +74,7 @@ export const App: React.FC = () => {
     // 初始同步
     syncBounds()
 
-    // 监听中心占位容器尺寸变化（窗口拉伸、侧栏折叠、收藏夹切换等）
+    // 监听中心占位容器尺寸变化（窗口拉伸、侧栏折叠、收藏夹切换、容器抽屉打开等）
     const observer = new ResizeObserver(() => {
       syncBounds()
     })
@@ -89,12 +89,15 @@ export const App: React.FC = () => {
       observer.disconnect()
       window.removeEventListener('resize', syncBounds)
     }
-  }, [isSidebarCollapsed, isBookmarksVisible])
+  }, [isSidebarCollapsed, isBookmarksVisible, inspectingContainerId])
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-950 font-sans">
       {/* 左翼 · 容器中心化管理栏 (240px 全展开 或 48px Mini Dock) */}
       {isSidebarCollapsed ? <MiniDock /> : <ContainerSidebar />}
+
+      {/* 容器属性编辑抽屉 (紧邻侧栏排列，打开时自动将主网页视窗右移，绝不遮挡) */}
+      {inspectingContainerId && <ContainerInspector />}
 
       {/* 中心与主视觉区域 */}
       <div className="flex-1 flex flex-col min-w-0 h-full relative">
@@ -126,9 +129,6 @@ export const App: React.FC = () => {
 
       {/* 右翼 · 扩展坞 (40px) */}
       <RightDock />
-
-      {/* 容器属性编辑抽屉 (Inspector Drawer) */}
-      <ContainerInspector />
     </div>
   )
 }

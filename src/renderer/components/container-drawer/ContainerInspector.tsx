@@ -87,7 +87,7 @@ export const ContainerInspector: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-y-0 left-0 w-80 bg-slate-900 border-r border-slate-800 shadow-2xl z-50 flex flex-col select-none animate-in slide-in-from-left duration-200">
+    <div className="w-80 bg-slate-900 border-r border-slate-800 flex flex-col select-none z-20 shrink-0 h-full animate-in slide-in-from-left duration-200">
       {/* 抽屉头部 */}
       <div className="h-12 px-4 border-b border-slate-800 flex items-center justify-between">
         <div className="flex items-center gap-2">

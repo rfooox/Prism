@@ -47,7 +47,16 @@ export const NavBar: React.FC<NavBarProps> = ({ onToggleBookmarks, isBookmarksVi
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter' && activeTab) {
-      navigateTab(activeTab.id, inputUrl)
+      let targetUrl = inputUrl.trim()
+      if (!/^https?:\/\//i.test(targetUrl) && !/^about:/i.test(targetUrl)) {
+        if (targetUrl.includes('.') && !targetUrl.includes(' ')) {
+          targetUrl = 'https://' + targetUrl
+        } else {
+          targetUrl = `https://www.google.com/search?q=${encodeURIComponent(targetUrl)}`
+        }
+      }
+      setInputUrl(targetUrl)
+      navigateTab(activeTab.id, targetUrl)
       ;(e.target as HTMLInputElement).blur()
     }
   }
